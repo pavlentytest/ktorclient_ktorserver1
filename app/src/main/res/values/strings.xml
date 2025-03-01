@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">My Application</string>
+    <string name="get">Get</string>
+    <string name="receive">Receive</string>
+    <string name="send">Send</string>
+    <string name="lastname">Lastname</string>
+    <string name="ivanov">Ivanov</string>
+    <string name="ivan">Ivan</string>
+    <string name="firstname">Firstname</string>
+    <string name="age">Age</string>
+    <string name="_20">20</string>
+    <string name="name">Name</string>
+    <string name="max_sidorov">Max Sidorov</string>
+    <string name="found">Найден: %1$s - %2$s - %3$s</string>
+</resources>
