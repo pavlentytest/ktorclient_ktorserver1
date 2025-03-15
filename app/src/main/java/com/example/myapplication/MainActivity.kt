@@ -4,55 +4,54 @@ import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
-
+import androidx.lifecycle.lifecycleScope
 import com.example.myapplication.databinding.ActivityMainBinding
-import io.ktor.client.HttpClient
-import io.ktor.client.call.body
-import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.client.request.get
-import io.ktor.client.request.post
-import io.ktor.client.request.setBody
-import io.ktor.http.ContentType
-import io.ktor.http.contentType
-import io.ktor.serialization.kotlinx.json.json
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import com.example.myapplication.viewmodel.AppViewModel
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import kotlinx.serialization.Serializable
 
-@Serializable
-data class User(val name: String, val age: Int) {
-    var id: Int = 0
-    constructor(id_: Int, name: String, age: Int) : this(name, age) {
-        this.id = id_
-    }
-    override fun toString(): String = "$id - $name - $age"
-}
-
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
-    private lateinit var mainViewModel: MainViewModel
-
+    private lateinit var mainViewModel: AppViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        binding.url.text = connectionURL
-
-        mainViewModel = ViewModelProvider(this)[MainViewModel::class.java]
-
-        binding.send.setOnClickListener {
-            with(binding) {
-                mainViewModel.addUser(name.text.toString(), age.text.toString().toInt())
+        mainViewModel = ViewModelProvider(this)[AppViewModel::class.java]
+        with(binding) {
+            send.setOnClickListener {
+                mainViewModel.sendUser(name.text.toString(),age.text.toString().toInt())
+                lifecycleScope.launch {
+                    mainViewModel.id.collectLatest {
+                        it.let { value ->
+                            binding.result.text = value.data?.toString() ?: ""
+                        }
+                    }
+                }
+            }
+            receive.setOnClickListener {
+                mainViewModel.fetchUsers()
+                lifecycleScope.launch {
+                    mainViewModel.users.collect {
+                        it.let { users ->
+                            binding.result.text = users.data?.joinToString("\n") ?: ""
+                        }
+                    }
+                }
+            }
+            get.setOnClickListener {
+                lifecycleScope.launch {
+                    mainViewModel.fetchUser(3)
+                    mainViewModel.user.collect {
+                        it.let { user ->
+                            binding.result.text = user.data?.toString() ?: ""
+                        }
+                    }
+                }
             }
         }
-        binding.receive.setOnClickListener {
-            mainViewModel.listUsers()
-        }
-        binding.get.setOnClickListener {
-            mainViewModel.getUser(3)
 
-        }
     }
 }
