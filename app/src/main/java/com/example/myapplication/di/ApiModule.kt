@@ -4,6 +4,7 @@ import android.R.attr.level
 import com.example.myapplication.Util
 import com.example.myapplication.remote.ApiService
 import com.example.myapplication.remote.ApiServiceImpl
+import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
@@ -22,7 +23,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.serialization.json.Json
 import javax.inject.Singleton
 
-@dagger.Module
+@Module
 @InstallIn(SingletonComponent::class)
 object ApiModule {
 

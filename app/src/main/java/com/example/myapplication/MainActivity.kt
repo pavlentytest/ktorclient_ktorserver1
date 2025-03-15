@@ -2,6 +2,7 @@ package com.example.myapplication
 
 import android.os.Bundle
 import android.util.Log
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -14,12 +15,12 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
-    private lateinit var mainViewModel: AppViewModel
+    private val mainViewModel by viewModels<AppViewModel>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        mainViewModel = ViewModelProvider(this)[AppViewModel::class.java]
         with(binding) {
             send.setOnClickListener {
                 mainViewModel.sendUser(name.text.toString(),age.text.toString().toInt())
